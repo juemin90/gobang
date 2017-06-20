@@ -1,0 +1,14 @@
+{
+  "name": "gobang",
+  "version": "1.0.0",
+  "description": "gobang",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gobang"
+  ],
+  "author": "juemin",
+  "license": "ISC"
+}
