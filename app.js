@@ -85,18 +85,17 @@ function addPiece(mousePos, ctx) {
   PIECE_COORDINATE.push(pieceCoordinate);
   console.log(PIECE_COORDINATE);
 
-  if (!judge()) return;
-  if (judge() === 1) {
-    setTimeout(function () {
-      alert('black wins');
-      init(ctx);
-    }, 100)
-  } else if (judge() === 0) {
+  console.log(judge(pieceCoordinate))
+  if (judge(pieceCoordinate) === 0) {
     setTimeout(function () {
       alert('white wins');
-      init(ctx);
+    }, 100)
+  } else if (judge(pieceCoordinate) === 1){
+    setTimeout(function () {
+      alert('black wins');
     }, 100)
   }
+
 }
 
 function getPieceCoordinate(mousePos) {
@@ -106,11 +105,42 @@ function getPieceCoordinate(mousePos) {
   return { x: x, y: y, piece_type: PIECE_NUM % 2 };
 }
 
-function judge() {
-  PIECE_COORDINATE.forEach(function (c) {
+function judge(pieceCoordinate) {
+  var pieces = PIECE_COORDINATE.filter(function (p) { return p.piece_type === pieceCoordinate.piece_type; })
+  if (pieces.length < 5) return false;
 
-  })
-  if (PIECE_NUM === 5) {
-    return 1;
+  var count_horizontal = 1;
+  var count_vertical = 1;
+  var count_lb_rt = 1;
+  var count_lt_rb = 1;
+
+  count_horizontal = count_horizontal + countPieces(pieceCoordinate, [1, 0]) + countPieces(pieceCoordinate, [-1, 0]);
+  count_vertical = count_vertical + countPieces(pieceCoordinate, [0, 1]) + countPieces(pieceCoordinate, [0, -1]);
+  count_lb_rt = count_lb_rt + countPieces(pieceCoordinate, [-1, -1]) + countPieces(pieceCoordinate, [1, 1]);
+  count_lt_rb = count_lt_rb + countPieces(pieceCoordinate, [-1, 1]) + countPieces(pieceCoordinate, [1, -1]);
+
+  if ([count_horizontal, count_vertical, count_lb_rt, count_lt_rb].indexOf(5) > -1) {
+    return pieceCoordinate.piece_type
   }
+}
+
+function countPieces(pieceCoordinate, vector) {
+  var count = 0;
+  var x = pieceCoordinate.x;
+  var y = pieceCoordinate.y;
+
+  for (var i = 0; i < 15; i++) {
+    // out of bound
+    x += vector[0];
+    y += vector[1];
+    if (x < 1 || y < 1 || x > 15 || y > 15) break;
+
+    // not same piece
+    var iteratedPos = PIECE_COORDINATE.find(function (p) { return p.x === x && p.y === y });
+    if (!iteratedPos || iteratedPos.piece_type !== pieceCoordinate.piece_type) break;
+
+    count++;
+  }
+
+  return count;
 }
