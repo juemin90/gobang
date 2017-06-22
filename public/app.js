@@ -96,16 +96,11 @@ function addPiece(pieceCoordinate, ctx) {
   PIECE_NUM++;
   PIECE_COORDINATE.push(pieceCoordinate);
   var result = judge(pieceCoordinate);
-  console.log(result);
 
   if (result === 0) {
-    setTimeout(function () {
-      $('.result').html('white wins')
-    }, 100)
+    $('.result').html('white wins')
   } else if (result === 1){
-    setTimeout(function () {
-      $('.result').html('black wins')
-    }, 100)
+    $('.result').html('black wins')
   }
 }
 
@@ -144,10 +139,8 @@ function judge(pieceCoordinate) {
   count_vertical = count_vertical + countPieces(pieceCoordinate, [0, 1]) + countPieces(pieceCoordinate, [0, -1]);
   count_lb_rt = count_lb_rt + countPieces(pieceCoordinate, [-1, -1]) + countPieces(pieceCoordinate, [1, 1]);
   count_lt_rb = count_lt_rb + countPieces(pieceCoordinate, [-1, 1]) + countPieces(pieceCoordinate, [1, -1]);
-  console.log(pieceCoordinate.piece_type, count_horizontal, count_vertical, count_lb_rt, count_lt_rb)
 
   if ([count_horizontal, count_vertical, count_lb_rt, count_lt_rb].indexOf(5) > -1) {
-    console.log(pieceCoordinate);
     return pieceCoordinate.piece_type
   }
 }
