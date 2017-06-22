@@ -9,7 +9,7 @@ exports.postHandler = (req, res) => {
         x: i,
         y: j,
       };
-      item.score = calculateScore(i, j, pieces);
+      item.score = getTotalScore(i, j, pieces);
 
       scores.push(item);
     })
@@ -23,7 +23,7 @@ exports.postHandler = (req, res) => {
   });
 }
 
-function calculateScore(i, j, pieces) {
+function getTotalScore(i, j, pieces) {
   if (pieces.find(p => { return p.x === i && p.y === j })) {
     return 0;
   }
@@ -33,7 +33,7 @@ function calculateScore(i, j, pieces) {
   const robotNum = getContinueNum({ x: i, y: j, piece_type: 1 }, pieces);
   const userNum = getContinueNum({ x: i, y: j, piece_type: 0 }, pieces);
 
-  return 1 + robotNum * 2 + userNum * 3;
+  return 1 + robotNum + userNum * 1.5;
 
 }
 
@@ -48,7 +48,11 @@ function getContinueNum(pieceCoordinate, pieces) {
   count_lb_rt = count_lb_rt + countPieces(pieceCoordinate, [-1, -1], pieces) + countPieces(pieceCoordinate, [1, 1], pieces);
   count_lt_rb = count_lt_rb + countPieces(pieceCoordinate, [-1, 1], pieces) + countPieces(pieceCoordinate, [1, -1], pieces);
 
-  return count_horizontal + count_vertical + count_lb_rt + count_lt_rb;
+  return getOneScore(count_horizontal) + getOneScore(count_vertical) + getOneScore(count_lb_rt) + getOneScore(count_lt_rb);
+}
+
+function getOneScore(num) {
+  return num * num;
 }
 
 function countPieces(pieceCoordinate, vector, pieces) {
