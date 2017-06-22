@@ -1,5 +1,9 @@
+$(function () {
+})
+
 var PIECE_NUM = 0;
 var PIECE_COORDINATE = [];
+var MY_TURN = true;
 
 $(function () {
   var canvas = document.getElementById('canvas');
@@ -51,23 +55,31 @@ function init(ctx) {
 function initEvent(ctx) {
   var canvas = document.getElementById('canvas');
   canvas.addEventListener('click', function (evt) {
+    if (!MY_TURN) return;
     var mousePos = getMousePos(canvas, evt)
     addPiece(mousePos, ctx);
+    MY_TURN = !MY_TURN;
+    robotTurn(ctx);
   });
 }
 
 function getMousePos(canvas, evt) {
+  if (evt.clientX < 20 || evt.clientY < 20 || evt.clientX > 440 || evt.clientY > 440) return;
   var rect = canvas.getBoundingClientRect();
-  return {
+  var mousePos = {
     x: evt.clientX - rect.left,
     y: evt.clientY - rect.top
   };
-}
-
-function addPiece(mousePos, ctx) {
-  if (mousePos.x < 20 || mousePos.y < 20 || mousePos.x > 440 || mousePos.y > 440) return;
 
   var pieceCoordinate = getPieceCoordinate(mousePos);
+  return {
+    x: pieceCoordinate.x,
+    y: pieceCoordinate.y,
+    piece_type: PIECE_NUM % 2,
+  };
+}
+
+function addPiece(pieceCoordinate, ctx) {
   if (PIECE_COORDINATE.find(function (c) {
     return c.x === pieceCoordinate.x && c.y === pieceCoordinate.y;
   })) return;
@@ -83,26 +95,40 @@ function addPiece(mousePos, ctx) {
 
   PIECE_NUM++;
   PIECE_COORDINATE.push(pieceCoordinate);
-  console.log(PIECE_COORDINATE);
+  var result = judge(pieceCoordinate);
+  console.log(result);
 
-  console.log(judge(pieceCoordinate))
-  if (judge(pieceCoordinate) === 0) {
+  if (result === 0) {
     setTimeout(function () {
       alert('white wins');
     }, 100)
-  } else if (judge(pieceCoordinate) === 1){
+  } else if (result === 1){
     setTimeout(function () {
       alert('black wins');
     }, 100)
   }
+}
 
+function robotTurn(ctx) {
+  $.ajax({
+    contentType: 'application/json',
+    url: '/api/next_piece',
+    type: 'POST',
+    data: JSON.stringify({
+      pieces: PIECE_COORDINATE,
+    }),
+    success: function (res) {
+      MY_TURN = !MY_TURN;
+      addPiece(res.data, ctx);
+    }
+  })
 }
 
 function getPieceCoordinate(mousePos) {
   var x =  Math.round((mousePos.x - 20) / 30) + 1;
   var y =  Math.round((mousePos.y - 20) / 30) + 1;
 
-  return { x: x, y: y, piece_type: PIECE_NUM % 2 };
+  return { x: x, y: y };
 }
 
 function judge(pieceCoordinate) {
@@ -118,8 +144,10 @@ function judge(pieceCoordinate) {
   count_vertical = count_vertical + countPieces(pieceCoordinate, [0, 1]) + countPieces(pieceCoordinate, [0, -1]);
   count_lb_rt = count_lb_rt + countPieces(pieceCoordinate, [-1, -1]) + countPieces(pieceCoordinate, [1, 1]);
   count_lt_rb = count_lt_rb + countPieces(pieceCoordinate, [-1, 1]) + countPieces(pieceCoordinate, [1, -1]);
+  console.log(pieceCoordinate.piece_type, count_horizontal, count_vertical, count_lb_rt, count_lt_rb)
 
   if ([count_horizontal, count_vertical, count_lb_rt, count_lt_rb].indexOf(5) > -1) {
+    console.log(pieceCoordinate);
     return pieceCoordinate.piece_type
   }
 }

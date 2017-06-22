@@ -10,5 +10,8 @@
     "gobang"
   ],
   "author": "juemin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2"
+  }
 }
