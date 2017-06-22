@@ -38,21 +38,34 @@ function getTotalScore(i, j, pieces) {
 }
 
 function getContinueNum(pieceCoordinate, pieces) {
-  var count_horizontal = 1;
-  var count_vertical = 1;
-  var count_lb_rt = 1;
-  var count_lt_rb = 1;
+  var count_l = countPieces(pieceCoordinate, [-1, 0], pieces) + checkPoint(pieceCoordinate, [1, 0], pieces);
+  var count_r = countPieces(pieceCoordinate, [1, 0], pieces) + checkPoint(pieceCoordinate, [-1, 0], pieces);
+  var count_t = countPieces(pieceCoordinate, [0, 1], pieces) + checkPoint(pieceCoordinate, [0, -1], pieces);
+  var count_b = countPieces(pieceCoordinate, [0, -1], pieces) + checkPoint(pieceCoordinate, [0, 1], pieces);
+  var count_lt = countPieces(pieceCoordinate, [-1, 1], pieces) + checkPoint(pieceCoordinate, [1, -1], pieces);
+  var count_rt = countPieces(pieceCoordinate, [1, 1], pieces) + checkPoint(pieceCoordinate, [-1, -1], pieces);
+  var count_lb = countPieces(pieceCoordinate, [-1, -1], pieces) + checkPoint(pieceCoordinate, [1, 1], pieces);
+  var count_rb = countPieces(pieceCoordinate, [1, -1], pieces) + checkPoint(pieceCoordinate, [-1, 1], pieces);
 
-  count_horizontal = count_horizontal + countPieces(pieceCoordinate, [1, 0], pieces) + countPieces(pieceCoordinate, [-1, 0], pieces);
-  count_vertical = count_vertical + countPieces(pieceCoordinate, [0, 1], pieces) + countPieces(pieceCoordinate, [0, -1], pieces);
-  count_lb_rt = count_lb_rt + countPieces(pieceCoordinate, [-1, -1], pieces) + countPieces(pieceCoordinate, [1, 1], pieces);
-  count_lt_rb = count_lt_rb + countPieces(pieceCoordinate, [-1, 1], pieces) + countPieces(pieceCoordinate, [1, -1], pieces);
-
-  return getOneScore(count_horizontal) + getOneScore(count_vertical) + getOneScore(count_lb_rt) + getOneScore(count_lt_rb);
+  return getOneScore(count_l) + getOneScore(count_r) + getOneScore(count_t) + getOneScore(count_b) + getOneScore(count_lt) + getOneScore(count_rt) + getOneScore(count_lb) + getOneScore(count_rb);
 }
 
 function getOneScore(num) {
-  return num * num;
+  if (num >= 3) {
+    return num * num;
+  } else {
+    return num
+  }
+}
+
+function checkPoint(pieceCoordinate, vector, pieces) {
+  var x = pieceCoordinate.x + vector.x;
+  var y = pieceCoordinate.y + vector.y;
+  if (pieces.find(p => p.x === x && p.y === y)) {
+    return 0;
+  } else {
+    return 0.5;
+  }
 }
 
 function countPieces(pieceCoordinate, vector, pieces) {
