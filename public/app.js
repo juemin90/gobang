@@ -100,11 +100,11 @@ function addPiece(pieceCoordinate, ctx) {
 
   if (result === 0) {
     setTimeout(function () {
-      alert('white wins');
+      $('.result').html('white wins')
     }, 100)
   } else if (result === 1){
     setTimeout(function () {
-      alert('black wins');
+      $('.result').html('black wins')
     }, 100)
   }
 }

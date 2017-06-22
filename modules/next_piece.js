@@ -33,7 +33,7 @@ function getTotalScore(i, j, pieces) {
   const robotNum = getContinueNum({ x: i, y: j, piece_type: 1 }, pieces);
   const userNum = getContinueNum({ x: i, y: j, piece_type: 0 }, pieces);
 
-  return 1 + robotNum + userNum * 1.5;
+  return 1 + userNum * 1.5;
 
 }
 
